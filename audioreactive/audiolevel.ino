@@ -6,8 +6,8 @@ Adafruit Microphone Amplifier
 #include <FastLED.h>
 #include <math.h>
 
-#define ANZAHL_LEDS 10
-#define LED_PIN 5
+#define NUM_LEDS 59
+#define LED_PIN 4
 #define UPDATES_PER_SECOND 100
 
 CRGB leds[NUM_LEDS];
@@ -26,45 +26,16 @@ void setup()
 
 void loop() 
 {
-   unsigned long startMillis= millis();  // Start of sample window
-   unsigned int peakToPeak = 0;   // peak-to-peak level
 
-   unsigned int signalMax = 0;
-   unsigned int signalMin = 1024;
+   int val = analogRead(0);
+   int numLedsToLight = map(val, 0, 1023, 0, NUM_LEDS);
+   int colorOffset = map(val, 0, 1023, 0, 100);
 
-   // collect data for 50 mS
-   while (millis() - startMillis < sampleWindow)
-   {
-      sample = analogRead(0);
-      if (sample < 1024)  // toss out spurious readings
-      {
-         if (sample > signalMax)
-         {
-            signalMax = sample;  // save just the max levels
-         }
-         else if (sample < signalMin)
-         {
-            signalMin = sample;  // save just the min levels
-         }
-      }
+   // First, clear the existing led values
+   FastLED.clear();
+   for(int led = 0; led < numLedsToLight; led++) { 
+      leds[led].setHue(100 - colorOffset); 
    }
-   peakToPeak = signalMax - signalMin;  // max - min = peak-peak amplitude
-   double volts = (peakToPeak * 5.0) / 1024;  // convert to volts
-
-   Serial.println(volts);
-
-   unsigned int level;
-   level = floor(volts * NUM_LEDS);
-
-   for (int i = 0; i < NUM_LEDS; i++){
-      leds[i] = CRGB::Black;
-   }
-
-   for (int i = 0; i < level; i++) {
-    leds[i] = CRGB::Green;
-    FastLED.show();
-  }
-
-  delay(100);
-
+   FastLED.show();
+   Serial.println(val);
 }
