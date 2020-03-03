@@ -28,13 +28,14 @@ void loop()
 {
 
    int val = analogRead(0);
-   int numLedsToLight = map(val, 0, 1023, 0, NUM_LEDS);
-   int colorOffset = map(val, 0, 1023, 0, 100);
+   int numLedsToLight = map(val, 400, 1023, 0, NUM_LEDS);
+   int colorOffset = map(val, 400, 1023, 0, 100);
+   int color = map(val, 400, 1023, 10, 255);
 
    // First, clear the existing led values
    FastLED.clear();
    for(int led = 0; led < numLedsToLight; led++) { 
-      leds[led].setHue(100 - colorOffset); 
+      leds[led].setHSV(color, 255, color);
    }
    FastLED.show();
    Serial.println(val);
