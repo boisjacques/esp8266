@@ -19,10 +19,6 @@ int iteration;
 int peak;
 int decay_timer;
 
-float relation(int a, int b) {
-    
-}
-
 void setup() 
 {
    delay( 3000 ); // power-up safety delay  
